@@ -5,15 +5,30 @@ const puppeteer = require('puppeteer');
 // Google Cloud Storage (https://firebase.google.com/docs/storage/web/start).
 const RENDER_CACHE = new Map();
 
-async function ssr(url) {
+async function ssr(url, browserWSEndpoint) {
   if (RENDER_CACHE.has(url)) {
     return {html: RENDER_CACHE.get(url), ttRenderMs: 0};
   }
 
   const start = Date.now();
+  console.info('Connecting to existing Chrome instance.');
+  const browser = await puppeteer.connect({browserWSEndpoint});
 
-  const browser = await puppeteer.launch();
   const page = await browser.newPage();
+  // 1. Intercept network requests.
+  await page.setRequestInterception(true);
+  page.on('request', req => {
+    // 2. Ignore requests for resources that don't produce DOM
+    // (images, stylesheets, media).
+    const whitelist = ['document', 'script', 'xhr', 'fetch'];
+    if (!whitelist.includes(req.resourceType())) {
+      return req.abort();
+    }
+
+    // 3. Pass through all other requests.
+    req.continue();
+  });
+
   try {
     // networkidle0 waits for the network to be idle (no requests for 500ms).
     // The page's JS has likely produced markup by this point, but wait longer
