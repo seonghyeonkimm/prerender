@@ -1,0 +1,27 @@
+{
+  "name": "prerender",
+  "version": "1.0.0",
+  "description": "",
+  "main": "ssr.js",
+  "scripts": {
+    "start": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/impressor615/prerender.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/impressor615/prerender/issues"
+  },
+  "homepage": "https://github.com/impressor615/prerender#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "puppeteer": "^2.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}

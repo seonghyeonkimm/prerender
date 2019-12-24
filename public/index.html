@@ -18,11 +18,16 @@
         container.innerHTML = `<ul id="posts">${html}</ul>`;
       }
 
-      
       (async() => {
         const container = document.querySelector('#container');
-        const posts = await fetch('/data.json').then(resp => resp.json());
-        renderPosts(posts, container);
+
+        // Posts markup is already in DOM if we're seeing a SSR'd.
+        // Don't re-hydrate the posts here on the client.
+        const PRE_RENDERED = container.querySelector('#posts');
+        if (!PRE_RENDERED) {
+          const posts = await fetch('/data.json').then(resp => resp.json());
+          renderPosts(posts, container);
+        }
       })();
     </script>
   </body>
